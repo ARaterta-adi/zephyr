@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2026 Analog Devices Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <dt-bindings/sensor/adxl380.h>
+
+/ {
+	aliases {
+		accel0 = &adxl380;
+	};
+};
+
+&spi1 {
+	status = "okay";
+
+	adxl380: adxl380@0 {
+		compatible = "adi,adxl380";
+		reg = <0>;
+		spi-max-frequency = <1000000>;
+		range = <ADXL380_DT_RANGE_16G>;
+		status = "okay";
+	};
+};

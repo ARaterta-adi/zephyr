@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2026 Analog Devices Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/gpio/adi-max32-gpio.h>
+#include <dt-bindings/sensor/adxl380.h>
+
+/ {
+	aliases {
+		accel0 = &adxl380;
+	};
+};
+
+&spi1 {
+	status = "okay";
+
+	adxl380: adxl380@0 {
+		compatible = "adi,adxl380";
+		reg = <0>;
+		spi-max-frequency = <1000000>;
+		range = <ADXL380_DT_RANGE_16G>;
+		/*
+		 * FIFO watermark interrupt line. Streaming requires an interrupt.
+		 * ADXL380 INT0 is wired to Arduino header D8 (gpio1 pin 31). This
+		 * pin's SPI1 quad-data alt-function is unused in 4-wire SPI mode.
+		 */
+		int0-gpios = <&gpio1 31 (GPIO_ACTIVE_HIGH | MAX32_GPIO_VSEL_VDDIOH)>;
+		fifo-watermark = <96>;
+		status = "okay";
+	};
+};

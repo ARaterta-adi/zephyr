@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2026 Analog Devices Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/gpio/adi-max32-gpio.h>
+#include <dt-bindings/sensor/adxl380.h>
+
+/ {
+	aliases {
+		accel0 = &adxl380;
+	};
+};
+
+&spi1 {
+	status = "okay";
+
+	adxl380: adxl380@0 {
+		compatible = "adi,adxl380";
+		reg = <0>;
+		spi-max-frequency = <1000000>;
+		range = <ADXL380_DT_RANGE_16G>;
+		/*
+		 * Data-ready triggers fire once per sample. HP mode (default) runs
+		 * at 8 kHz, which floods the per-sample interrupt read path; use a
+		 * low-rate mode (ULP = 50 Hz) for data-ready / activity triggering.
+		 */
+		op-mode = <ADXL38X_DT_OP_ULP>;
+		/*
+		 * Trigger (data-ready / motion) interrupt line. ADXL380 INT0 is
+		 * wired to Arduino header D8 (gpio1 pin 31); its SPI1 quad-data
+		 * alt-function is unused in 4-wire SPI mode.
+		 */
+		int0-gpios = <&gpio1 31 (GPIO_ACTIVE_HIGH | MAX32_GPIO_VSEL_VDDIOH)>;
+		status = "okay";
+	};
+};

@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2026 Analog Devices Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/sensor/adxl380.h>
+#include <zephyr/dt-bindings/sensor/adxl382.h>
+
+/* native_sim provides gpio0 (gpio_emul) for the trigger line. */
+&gpio0 {
+	status = "okay";
+};
+
+/* native_sim already provides spi0 as a zephyr,spi-emul-controller. */
+&spi0 {
+	status = "okay";
+
+	adxl380: adxl380@0 {
+		compatible = "adi,adxl380";
+		reg = <0>;
+		spi-max-frequency = <8000000>;
+		range = <ADXL380_DT_RANGE_16G>;
+		op-mode = <ADXL38X_DT_OP_HP>;
+		fifo-watermark = <96>;
+		hpf-corner = <ADXL38X_DT_HPF_OFF>;
+		int-pol = <ADXL38X_DT_INT_POL_ACTIVE_HIGH>;
+		int0-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+	};
+
+	adxl382: adxl382@1 {
+		compatible = "adi,adxl382";
+		reg = <1>;
+		spi-max-frequency = <8000000>;
+		range = <ADXL382_DT_RANGE_30G>;
+		op-mode = <ADXL38X_DT_OP_HP>;
+		fifo-watermark = <96>;
+		hpf-corner = <ADXL38X_DT_HPF_OFF>;
+		int-pol = <ADXL38X_DT_INT_POL_ACTIVE_HIGH>;
+		int0-gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+	};
+
+	/* ADXL380 with double-speed enabled, for TC-ATTR-003. */
+	adxl380_ds: adxl380@2 {
+		compatible = "adi,adxl380";
+		reg = <2>;
+		spi-max-frequency = <8000000>;
+		range = <ADXL380_DT_RANGE_16G>;
+		op-mode = <ADXL38X_DT_OP_HP>;
+		double-speed = <ADXL38X_DT_DOUBLE_SPEED_ENABLED>;
+		int0-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+	};
+};
